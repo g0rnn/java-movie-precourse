@@ -1,15 +1,22 @@
+package seat;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Seat {
+public class Seats {
 
     private static final int MAX_COLUMN = 8;
     private static final String RESERVED = "__";
     private static final String[] rows = {"A", "B", "C", "D", "E", "F", "G", "H"};
     private List<List<String>> seats;
 
-    public void init() {
-        seats = new ArrayList<>();
+    public Seats(List<List<String>> seats) {
+        this.seats = seats;
+    }
+
+    public static Seats create() {
+        List<List<String>> seats = new ArrayList<>();
+
         for (String prefix : rows) {
             List<String> row = new ArrayList<>();
             for (int i = 1; i <= MAX_COLUMN; i++) {
@@ -17,6 +24,8 @@ public class Seat {
             }
             seats.add(row);
         }
+
+        return new Seats(seats);
     }
 
     public void reserve(String seatName) {
@@ -25,7 +34,14 @@ public class Seat {
 
         int rowIdx = row - 'A';
         int colIdx = col - '0' - 1;
-        seats.get(rowIdx).set(colIdx, RESERVED);
+
+        List<String> rowSeat = seats.get(rowIdx);
+
+        if (RESERVED.equals(rowSeat.get(colIdx))) {
+            throw new IllegalArgumentException("이미 예약된 좌석입니다.");
+        }
+
+        rowSeat.set(colIdx, RESERVED);
     }
 
     @Override
