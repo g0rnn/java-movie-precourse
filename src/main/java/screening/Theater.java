@@ -21,6 +21,10 @@ public class Theater {
 
     public Set<ScreeningInfo> getScreeningInfoOf(Movie movie, LocalDate date) {
         // date 형식 validate -> 0000-00-00
+        if (schedule.get(date) == null || schedule.get(date).get(movie) == null) {
+            throw new IllegalArgumentException("존재하지 않는 영화 상영 정보입니다.");
+        }
+
         return schedule.get(date).get(movie);
     }
 
