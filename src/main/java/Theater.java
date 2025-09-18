@@ -1,7 +1,7 @@
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Theater {
 
@@ -14,7 +14,6 @@ public class Theater {
 
         // 티켓 발급
 
-
         return new Ticket();
     }
 
@@ -22,10 +21,10 @@ public class Theater {
         LocalDate screeningDate = LocalDate.parse(date);
 
         return this.schedule.computeIfAbsent(screeningDate, k -> new Screening())
-                .put(movie, startTime);
+                .put(movie, screeningDate, startTime);
     }
 
-    public List<ScreeningInfo> getScreeningInfoOf(Movie movie, LocalDate date) {
+    public Set<ScreeningInfo> getScreeningInfoOf(Movie movie, LocalDate date) {
         // date 형식 validate -> 0000-00-00
         return schedule.get(date).get(movie);
     }

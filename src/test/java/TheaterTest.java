@@ -1,4 +1,7 @@
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -7,7 +10,6 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class TheaterTest {
@@ -37,13 +39,13 @@ class TheaterTest {
         theater.save(movie, "2025-09-16", "10:30");
         theater.save(movie, "2025-09-16", "14:20");
         theater.save(movie, "2025-09-16", "19:30");
-        theater.save(movie, "2025-09-16", "21:00");
+        theater.save(movie, "2025-09-16", "23:00");
 
         //then
         assertThat(theater.getScreeningInfoOf(movie, LocalDate.parse("2025-09-16"))
                 .stream().map(ScreeningInfo::getStartTime))
                 .containsExactly(LocalTime.parse("10:30"), LocalTime.parse("14:20"), LocalTime.parse("19:30"),
-                        LocalTime.parse("21:00"));
+                        LocalTime.parse("23:00"));
     }
 
     @Test
@@ -83,8 +85,8 @@ class TheaterTest {
 
         LocalDate date = LocalDate.parse("2025-09-16");
 
-        List<ScreeningInfo> tanjiroScreenings = theater.getScreeningInfoOf(tanjiro, date);
-        List<ScreeningInfo> f1Screenings = theater.getScreeningInfoOf(f1, date);
+        Set<ScreeningInfo> tanjiroScreenings = theater.getScreeningInfoOf(tanjiro, date);
+        Set<ScreeningInfo> f1Screenings = theater.getScreeningInfoOf(f1, date);
 
         // 1) 같은 영화 내부에서도 각 상영정보가 서로 다른 객체(참조)인지 확인
         Set<ScreeningInfo> idSet = Collections.newSetFromMap(new IdentityHashMap<>());
@@ -112,4 +114,87 @@ class TheaterTest {
         assertThat(t1030).isNotSameAs(f1030); // == 비교(동일성)
     }
 
+    @Test
+    void 상영_시간은_영화_상영길이에_따라_정해진다() throws Exception {
+        // given
+        Theater theater = new Theater();
+        Movie movie = new Movie("귀멸의 칼날", 155);
+
+        //when
+        theater.save(movie, "2025-10-19", "19:30");
+
+        //then
+        assertThrows(IllegalArgumentException.class,
+                () -> theater.save(movie, "2025-10-19", "19:30"));
+    }
+
+    @Test
+    void 상영_시간은_영화_상영길이에_따라_정해진다2() throws Exception {
+        // given
+        Theater theater = new Theater();
+        Movie movie = new Movie("귀멸의 칼날", 155);
+
+        //when
+        theater.save(movie, "2025-10-19", "19:30");
+
+        //then
+        assertThrows(IllegalArgumentException.class,
+                () -> theater.save(movie, "2025-10-19", "18:30"));
+    }
+
+    @Test
+    void 상영_시간은_영화_상영길이에_따라_정해진다3() throws Exception {
+        // given
+        Theater theater = new Theater();
+        Movie movie = new Movie("귀멸의 칼날", 155);
+
+        //when
+        theater.save(movie, "2025-10-19", "19:30");
+        theater.save(movie, "2025-10-19", "23:00");
+
+        //then
+        assertEquals(2, theater.getScreeningInfoOf(movie, LocalDate.parse("2025-10-19")).size());
+        System.out.println("theater = " + theater.getScreeningInfoOf(movie, LocalDate.parse("2025-10-19")));
+        assertThrows(IllegalArgumentException.class,
+                () -> theater.save(movie, "2025-10-19", "22:05"));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> theater.save(movie, "2025-10-19", "22:10"));
+    }
+
+    @Test
+    void 상영_시간은_이전_영화_종료_시간_30분_이후부터_가능하다() throws Exception {
+        // given
+        Theater theater = new Theater();
+        Movie movie = new Movie("귀멸의 칼날", 155);
+
+        //when
+        theater.save(movie, "2025-10-19", "19:30");
+
+        //then
+        assertThrows(IllegalArgumentException.class,
+                () -> theater.save(movie, "2025-10-19", "22:34"));
+        assertDoesNotThrow(() -> theater.save(movie, "2025-10-19", "22:35")); // 이전 영화 종료시간에 대해 닫혀 있음
+    }
+
+    @Test
+    void 기본적인_상영관_운영_시간은_8시반에서_00시반이다() throws Exception {
+        //given
+        Theater theater = new Theater();
+        Movie movie = new Movie("귀멸의 칼날", 155);
+
+        assertDoesNotThrow(() -> theater.save(movie, "2025-10-19", "08:30"));
+        assertDoesNotThrow(() -> theater.save(movie, "2025-10-20", "00:30"));
+
+    }
+
+    @Test
+    void 상영관_운영_시간을_벗어나면_예외를_던진다() throws Exception {
+        //given
+        Theater theater = new Theater();
+        Movie movie = new Movie("귀멸의 칼날", 155);
+
+        assertThrows(IllegalArgumentException.class, () -> theater.save(movie, "2025-10-19", "08:29"));
+        assertThrows(IllegalArgumentException.class, () -> theater.save(movie, "2025-10-20", "00:31"));
+    }
 }

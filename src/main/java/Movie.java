@@ -10,6 +10,10 @@ public class Movie {
         this.runningTime = runningTime;
     }
 
+    public int getRunningTime() {
+        return this.runningTime;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
