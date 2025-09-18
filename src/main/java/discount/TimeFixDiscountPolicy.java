@@ -5,9 +5,10 @@ import reservation.ReservationDto;
 
 public class TimeFixDiscountPolicy implements DiscountPolicy {
 
+    private static final LocalTime START_DISCOUNT_TIME = LocalTime.parse("11:00");
+    private static final LocalTime END_DISCOUNT_TIME = LocalTime.parse("20:00");
+
     private final int discountPrice = 2000;
-    private final LocalTime START_DISCOUNT_TIME = LocalTime.parse("11:00");
-    private final LocalTime END_DISCOUNT_TIME = LocalTime.parse("20:00");
 
     @Override
     public int discount(ReservationDto reservation, int price) {
@@ -18,5 +19,10 @@ public class TimeFixDiscountPolicy implements DiscountPolicy {
         }
 
         return price;
+    }
+
+    @Override
+    public int priority() {
+        return 2;
     }
 }

@@ -14,4 +14,9 @@ public class MovieDayDiscountPolicy implements DiscountPolicy {
         }
         return price;
     }
+
+    @Override
+    public int priority() {
+        return 1;
+    }
 }
