@@ -1,6 +1,7 @@
 package reservation;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -103,25 +104,87 @@ class ReservationServiceTest {
 
     @Test
     void 여러_영화를_한번에_예매할_수_있다() throws Exception {
+        //given
+        LocalDate date = LocalDate.parse("2025-09-16");
+        Movie tanjiro = new Movie("귀멸의 칼날", 155);
+        LocalTime tanjiroTime = LocalTime.parse("10:30");
+        List<String> tanjiroSeat = List.of("B1", "B2");
 
+        Movie f1 = new Movie("F1 the Movie", 155);
+        LocalTime f1Time = LocalTime.parse("17:20");
+        List<String> f1Seat = List.of("B1", "B2");
+
+        List<ReservationDto> reservationDtos = List.of(
+                new ReservationDto(tanjiro, date, tanjiroTime, tanjiroSeat),
+                new ReservationDto(f1, date, f1Time, f1Seat)
+        );
+
+        //when
+        ReservationService reservation = new ReservationService(theater);
+        List<Ticket> tickets = reservation.reserveAll(reservationDtos);
+
+        //then
+        assertThat(tickets.size()).isEqualTo(2);
+        assertTrue(tickets.stream().map(Ticket::getMovie)
+                .anyMatch(movie -> movie.equals(tanjiro)));
+        assertTrue(tickets.stream().map(Ticket::getMovie)
+                .anyMatch(movie -> movie.equals(f1)));
     }
 
     @Test
     void 상영_시간이_겹치는_영화는_예매할_수_없다() throws Exception {
         //given
+        LocalDate date = LocalDate.parse("2025-09-16");
+        Movie tanjiro = new Movie("귀멸의 칼날", 155);
+        LocalTime tanjiroTime = LocalTime.parse("10:30"); // endTime="13:05"
+        List<String> tanjiroSeat = List.of("B1", "B2");
 
-        //when
+        Movie f1 = new Movie("F1 the Movie", 155);
+        LocalTime f1Time = LocalTime.parse("09:00");
+        List<String> f1Seat = List.of("B1", "B2");
 
-        //then
+        List<ReservationDto> reservationDtos = List.of(
+                new ReservationDto(tanjiro, date, tanjiroTime, tanjiroSeat),
+                new ReservationDto(f1, date, f1Time, f1Seat)
+        );
+
+        ReservationService reservation = new ReservationService(theater);
+
+        //when & then
+        assertThrows(IllegalArgumentException.class,
+                () -> reservation.reserveAll(reservationDtos));
     }
 
     @Test
     void 예매가_취소되면_좌석도_돌아온다() throws Exception {
         //given
+        LocalDate date = LocalDate.parse("2025-09-16");
+        Movie tanjiro = new Movie("귀멸의 칼날", 155);
+        LocalTime tanjiroTime = LocalTime.parse("10:30"); // endTime="13:05"
+        List<String> tanjiroSeat = List.of("B1", "B2");
 
-        //when
+        Movie f1 = new Movie("F1 the Movie", 155);
+        LocalTime f1Time = LocalTime.parse("09:00");
+        List<String> f1Seat = List.of("B1", "B2");
+
+        List<ReservationDto> reservationDtos = List.of(
+                new ReservationDto(tanjiro, date, tanjiroTime, tanjiroSeat),
+                new ReservationDto(f1, date, f1Time, f1Seat)
+        );
+
+        ReservationService reservation = new ReservationService(theater);
 
         //then
+        assertThrows(IllegalArgumentException.class,
+                () -> reservation.reserveAll(reservationDtos));
+
+        ScreeningInfo tanjiroScreening = theater.findScreeningInfoBy(tanjiro, date, tanjiroTime);
+        assertFalse(tanjiroScreening.isReserved("B1"));
+        assertFalse(tanjiroScreening.isReserved("B2"));
+
+        ScreeningInfo f1Screening = theater.findScreeningInfoBy(f1, date, f1Time);
+        assertFalse(f1Screening.isReserved("B1"));
+        assertFalse(f1Screening.isReserved("B2"));
     }
 
     private Theater initMovie() {

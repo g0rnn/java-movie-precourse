@@ -12,6 +12,10 @@ public class Movie {
         this.runningTime = runningTime;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
     public int getRunningTime() {
         return this.runningTime;
     }

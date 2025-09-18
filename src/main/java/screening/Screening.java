@@ -7,7 +7,6 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableSet;
-import java.util.Set;
 import java.util.TreeSet;
 
 public class Screening {
@@ -31,8 +30,21 @@ public class Screening {
         this.closeTime = closeTime;
     }
 
-    public Set<ScreeningInfo> get(Movie movie) {
+    public NavigableSet<ScreeningInfo> getScreeningInfoOf(Movie movie) {
+        if (!info.containsKey(movie)) {
+            throw new IllegalArgumentException("영화 상영 기간이 아닙니다. 영화 이름: " + movie.getName());
+        }
         return info.get(movie);
+    }
+
+    public void rollback(Movie movie, LocalTime startTime, String seatName) {
+        NavigableSet<ScreeningInfo> screeningInfos = getScreeningInfoOf(movie);
+        ScreeningInfo sameStartScreening = ScreeningInfo.from(startTime);
+
+        if (screeningInfos.contains(sameStartScreening)) {
+            ScreeningInfo target = screeningInfos.ceiling(sameStartScreening);
+            target.rollback(seatName);
+        }
     }
 
     public boolean put(Movie movie, LocalDate screeningDate, String startTime) {

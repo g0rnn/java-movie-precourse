@@ -25,9 +25,18 @@ public class ScreeningInfo implements Comparable<ScreeningInfo> {
         return seats.reserve(seatName);
     }
 
+    public void rollback(String seatName) {
+        seats.rollback(seatName);
+    }
+
     public static ScreeningInfo from(String startTime) {
         // TODO: validate(startTime);
         return new ScreeningInfo(LocalTime.parse(startTime));
+    }
+
+    public static ScreeningInfo from(LocalTime startTime) {
+        // TODO: validate(startTime);
+        return new ScreeningInfo(startTime);
     }
 
     @Override

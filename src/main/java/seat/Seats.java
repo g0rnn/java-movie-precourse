@@ -14,6 +14,13 @@ public class Seats {
         this.seats = seats;
     }
 
+    public void rollback(String seatName) {
+        int rowIdx = getRowIdx(seatName);
+        int colIdx = getColIdx(seatName);
+
+        seats.get(rowIdx).get(colIdx).rollback(seatName);
+    }
+
     public int reserve(String seatName) {
         int rowIdx = getRowIdx(seatName);
         int colIdx = getColIdx(seatName);

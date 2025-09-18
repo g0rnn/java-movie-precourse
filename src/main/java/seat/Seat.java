@@ -21,6 +21,10 @@ public class Seat {
         return grade.getPrice();
     }
 
+    public void rollback(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return this.name;
     }
