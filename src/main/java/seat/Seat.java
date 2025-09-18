@@ -21,6 +21,10 @@ public class Seat {
         return grade.getPrice();
     }
 
+    public String getName() {
+        return this.name;
+    }
+
     @Override
     public String toString() {
         return name;

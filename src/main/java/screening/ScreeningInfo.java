@@ -1,6 +1,7 @@
 package screening;
 
 import java.time.LocalTime;
+import seat.Seat;
 import seat.Seats;
 
 public class ScreeningInfo implements Comparable<ScreeningInfo> {
@@ -14,6 +15,14 @@ public class ScreeningInfo implements Comparable<ScreeningInfo> {
 
     public LocalTime getStartTime() {
         return this.startTime;
+    }
+
+    public boolean isReserved(String seatName) {
+        return seats.isReserved(Seat.from(seatName));
+    }
+
+    public int reserve(String seatName) {
+        return seats.reserve(seatName);
     }
 
     public static ScreeningInfo from(String startTime) {
