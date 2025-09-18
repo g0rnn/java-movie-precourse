@@ -1,3 +1,5 @@
+package screening;
+
 import java.util.Objects;
 
 public class Movie {

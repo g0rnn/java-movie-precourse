@@ -1,3 +1,5 @@
+package screening;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,21 +15,6 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 
 class TheaterTest {
-
-//    @Test
-//    void reserveMovie() throws Exception {
-//        //given
-//        Theater theater = new Theater();
-//
-//        //when
-//        Ticket ticket = theater.reserve("귀멸의 칼날", "2025-09-16", "19:30", 2);
-//
-//        //then
-//        assertThat(ticket.getTitle()).isEqualTo("귀멸의 칼날");
-//        assertThat(ticket.getDate()).isEqualTo(LocalDate.parse("2025-09-16"));
-//        assertThat(ticket.getStartTime()).isEqualTo(LocalTime.parse("19:30"));
-//        assertThat(ticket.getCompanion()).isEqualTo(2);
-//    }
 
     @Test
     void saveMovie() throws Exception {
@@ -53,7 +40,7 @@ class TheaterTest {
         //given
         Theater theater = new Theater();
         Movie tanjiro = new Movie("귀멸의 칼날", 155);
-        Movie f1 = new Movie("F1 The Movie", 155);
+        Movie f1 = new Movie("F1 The screening.Movie", 155);
 
         //when
         theater.save(tanjiro, "2025-09-16", "10:30");
@@ -76,7 +63,7 @@ class TheaterTest {
         // given
         Theater theater = new Theater();
         Movie tanjiro = new Movie("귀멸의 칼날", 155);
-        Movie f1 = new Movie("F1 The Movie", 155);
+        Movie f1 = new Movie("F1 The screening.Movie", 155);
 
         theater.save(tanjiro, "2025-09-16", "10:30");
         theater.save(tanjiro, "2025-09-16", "14:20");

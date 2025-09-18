@@ -1,3 +1,5 @@
+package screening;
+
 import java.time.LocalTime;
 import seat.Seats;
 
