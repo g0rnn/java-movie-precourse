@@ -4,15 +4,19 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import payment.CardPayment;
+import payment.PaymentService;
 import screening.Movie;
 import screening.Theater;
 
 public class ReservationService {
 
     private final Theater theater;
+    private final PaymentService paymentService;
 
-    public ReservationService(Theater theater) {
+    public ReservationService(Theater theater, PaymentService paymentService) {
         this.theater = theater;
+        this.paymentService = paymentService;
     }
 
     public Ticket reserve(ReservationDto rsv) {
@@ -22,7 +26,9 @@ public class ReservationService {
         List<String> seats = rsv.seats();
 
         if (theater.canReserve(movie, date, startTime, seats)) {
-            theater.reserveSeats(movie, date, startTime, seats);
+            int price = theater.reserveSeats(movie, date, startTime, seats);
+            paymentService.process(rsv, price, new CardPayment());
+
             return theater.issue(movie, date, startTime, seats);
         }
 

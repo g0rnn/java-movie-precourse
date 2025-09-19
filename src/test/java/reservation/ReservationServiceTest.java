@@ -11,6 +11,7 @@ import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import payment.PaymentService;
 import screening.Movie;
 import screening.ScreeningInfo;
 import screening.Theater;
@@ -18,6 +19,7 @@ import screening.Theater;
 class ReservationServiceTest {
 
     private Theater theater;
+    private PaymentService paymentService = new PaymentService();
 
     @BeforeEach
     void init() {
@@ -32,7 +34,7 @@ class ReservationServiceTest {
         LocalTime time = LocalTime.parse("10:30");
         List<String> seats = List.of("B1", "B2");
 
-        ReservationService reservation = new ReservationService(theater);
+        ReservationService reservation = new ReservationService(theater, paymentService);
 
         //when
         Ticket ticket = reservation.reserve(new ReservationDto(tanjiro, date, time, seats));
@@ -53,7 +55,7 @@ class ReservationServiceTest {
         LocalTime time = LocalTime.parse("10:30");
         List<String> seats = List.of("B1", "B2");
 
-        ReservationService reservation = new ReservationService(theater);
+        ReservationService reservation = new ReservationService(theater, paymentService);
 
         //when
         Ticket ticket = reservation.reserve(new ReservationDto(tanjiro, date, time, seats));
@@ -75,7 +77,7 @@ class ReservationServiceTest {
         LocalTime time = LocalTime.parse("10:30");
         List<String> seats = List.of("B1", "B2");
 
-        ReservationService reservation = new ReservationService(theater);
+        ReservationService reservation = new ReservationService(theater, paymentService);
 
         //when
         assertThrows(IllegalArgumentException.class,
@@ -94,7 +96,7 @@ class ReservationServiceTest {
         List<String> seats = List.of("B1", "B2");
 
         //when
-        ReservationService reservation = new ReservationService(theater);
+        ReservationService reservation = new ReservationService(theater, paymentService);
         reservation.reserve(new ReservationDto(tanjiro, date, time, seats));
 
         //then
@@ -120,7 +122,7 @@ class ReservationServiceTest {
         );
 
         //when
-        ReservationService reservation = new ReservationService(theater);
+        ReservationService reservation = new ReservationService(theater, paymentService);
         List<Ticket> tickets = reservation.reserveAll(reservationDtos);
 
         //then
@@ -148,7 +150,7 @@ class ReservationServiceTest {
                 new ReservationDto(f1, date, f1Time, f1Seat)
         );
 
-        ReservationService reservation = new ReservationService(theater);
+        ReservationService reservation = new ReservationService(theater, paymentService);
 
         //when & then
         assertThrows(IllegalArgumentException.class,
@@ -172,7 +174,7 @@ class ReservationServiceTest {
                 new ReservationDto(f1, date, f1Time, f1Seat)
         );
 
-        ReservationService reservation = new ReservationService(theater);
+        ReservationService reservation = new ReservationService(theater, paymentService);
 
         //then
         assertThrows(IllegalArgumentException.class,

@@ -38,12 +38,15 @@ public class Theater {
         }
     }
 
-    public void reserveSeats(Movie movie, LocalDate date, LocalTime startTime, List<String> seats) {
+    public int reserveSeats(Movie movie, LocalDate date, LocalTime startTime, List<String> seats) {
+        int totalPrice = 0;
         ScreeningInfo screeningInfo = findScreeningInfoBy(movie, date, startTime);
 
         for (String seat : seats) {
-            screeningInfo.reserve(seat);
+            totalPrice += screeningInfo.reserve(seat);
         }
+
+        return totalPrice;
     }
 
     public Ticket issue(Movie movie, LocalDate date, LocalTime startTime, List<String> seats) {
